@@ -1,0 +1,11 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - API_KEY=YAssine7495!
+      - DATABASE_URL=sqlite:///./cybersentinel.db
+    volumes:
+      - ./:/app
+
