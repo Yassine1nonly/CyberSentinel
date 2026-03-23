@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_dashboard" android:title="Dashboard" android:icon="@drawable/ic_dashboard"/>
+    <item android:id="@+id/nav_alerts"    android:title="Alerts"    android:icon="@drawable/ic_alert"/>
+    <item android:id="@+id/nav_ips"       android:title="IPs"       android:icon="@drawable/ic_network"/>
+    <item android:id="@+id/nav_settings"  android:title="Settings"  android:icon="@drawable/ic_settings"/>
+</menu>

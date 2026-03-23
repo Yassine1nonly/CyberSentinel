@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_ip_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0 suspicious IPs"
+        android:textColor="@color/accent_cyan"
+        android:textSize="13sp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:fontFamily="sans-serif-medium"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_ips"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="12dp"
+        android:clipToPadding="false"/>
+
+</LinearLayout>

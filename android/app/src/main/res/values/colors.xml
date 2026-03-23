@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark SOC theme palette -->
+    <color name="bg_primary">#0D0D1A</color>
+    <color name="bg_secondary">#1A1A2E</color>
+    <color name="bg_card">#16213E</color>
+    <color name="accent_blue">#0F3460</color>
+    <color name="accent_cyan">#00B4D8</color>
+
+    <color name="severity_critical">#B71C1C</color>
+    <color name="severity_high">#E65100</color>
+    <color name="severity_medium">#F57F17</color>
+    <color name="severity_low">#1B5E20</color>
+    <color name="severity_info">#1565C0</color>
+
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0BEC5</color>
+
+    <color name="colorPrimary">#0F3460</color>
+    <color name="colorPrimaryVariant">#0D0D1A</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondary">#00B4D8</color>
+    <color name="colorOnSecondary">#000000</color>
+    <color name="colorSurface">#1A1A2E</color>
+    <color name="colorOnSurface">#FFFFFF</color>
+    <color name="colorBackground">#0D0D1A</color>
+    <color name="colorOnBackground">#FFFFFF</color>
+    <color name="colorError">#CF6679</color>
+    <color name="colorOnError">#000000</color>
+</resources>
