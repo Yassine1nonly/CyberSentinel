@@ -6,14 +6,6 @@
     android:background="@color/bg_primary"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/bg_secondary"
-        android:elevation="4dp"
-        app:titleTextColor="@color/text_primary" />
-
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"

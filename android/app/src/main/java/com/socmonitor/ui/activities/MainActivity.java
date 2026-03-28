@@ -2,12 +2,11 @@ package com.socmonitor.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.socmonitor.R;
 import com.socmonitor.network.MockDataRepository;
@@ -24,27 +23,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        // No setSupportActionBar — theme handles the ActionBar
         BottomNavigationView nav = findViewById(R.id.bottom_nav);
 
-        // New-alert badge
-        int newCount = MockDataRepository.getInstance().filterBySeverity("ALL").size();
-        BadgeDrawable badge = nav.getOrCreateBadge(R.id.nav_alerts);
-        badge.setNumber(newCount);
-        badge.setVisible(true);
-
         nav.setOnNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
             Fragment f = null;
-            String title = "CyberSentinel";
-            if (id == R.id.nav_dashboard) { f = new DashboardFragment(); title = "Dashboard"; }
-            else if (id == R.id.nav_alerts)   { f = new AlertsFragment();   title = "Alerts"; }
-            else if (id == R.id.nav_ips)      { f = new IpsFragment();      title = "Suspicious IPs"; }
-            else if (id == R.id.nav_settings) { f = new SettingsFragment(); title = "Settings"; }
+            int id = item.getItemId();
+            if (id == R.id.nav_dashboard) {
+                f = new DashboardFragment();
+                setTitle("Dashboard");
+            } else if (id == R.id.nav_alerts) {
+                f = new AlertsFragment();
+                setTitle("Alerts");
+            } else if (id == R.id.nav_ips) {
+                f = new IpsFragment();
+                setTitle("Suspicious IPs");
+            } else if (id == R.id.nav_settings) {
+                f = new SettingsFragment();
+                setTitle("Settings");
+            }
             if (f != null) {
-                if (getSupportActionBar() != null) getSupportActionBar().setTitle(title);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, f).commit();
                 return true;
@@ -52,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // Default screen
         nav.setSelectedItemId(R.id.nav_dashboard);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }

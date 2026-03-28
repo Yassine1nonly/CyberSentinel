@@ -5,7 +5,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import com.socmonitor.R;
 import com.socmonitor.model.Alert;
 import com.socmonitor.network.MockDataRepository;
@@ -20,8 +19,7 @@ public class AlertDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alert_detail);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        // No custom toolbar - use default ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Alert Detail");
@@ -30,7 +28,6 @@ public class AlertDetailActivity extends AppCompatActivity {
         String id = getIntent().getStringExtra(EXTRA_ID);
         Alert alert = MockDataRepository.getInstance().getById(id);
         if (alert == null) { finish(); return; }
-
         bind(alert);
     }
 
@@ -53,7 +50,6 @@ public class AlertDetailActivity extends AppCompatActivity {
         tvStatus.setText(a.getStatus());
         tvStatus.setTextColor(SeverityUtils.getStatusColor(a.getStatus()));
 
-        // Evidence
         if (a.getEvidence() != null) {
             StringBuilder sb = new StringBuilder();
             for (String e : a.getEvidence()) sb.append("• ").append(e).append("\n");
@@ -82,16 +78,16 @@ public class AlertDetailActivity extends AppCompatActivity {
     private void updateButtons(Alert a, Button ack, Button resolve, TextView tvStatus) {
         tvStatus.setText(a.getStatus());
         tvStatus.setTextColor(SeverityUtils.getStatusColor(a.getStatus()));
-        boolean isAck      = "ACKNOWLEDGED".equals(a.getStatus());
-        boolean isResolved = "RESOLVED".equals(a.getStatus());
-        ack.setEnabled(!isAck && !isResolved);
-        ack.setAlpha((!isAck && !isResolved) ? 1f : 0.4f);
-        resolve.setEnabled(!isResolved);
-        resolve.setAlpha(!isResolved ? 1f : 0.4f);
+        boolean done = "RESOLVED".equals(a.getStatus());
+        boolean acked = "ACKNOWLEDGED".equals(a.getStatus());
+        ack.setEnabled(!acked && !done);
+        ack.setAlpha((!acked && !done) ? 1f : 0.4f);
+        resolve.setEnabled(!done);
+        resolve.setAlpha(!done ? 1f : 0.4f);
     }
 
-    private void setText(int viewId, String text) {
-        TextView tv = findViewById(viewId);
+    private void setText(int id, String text) {
+        TextView tv = findViewById(id);
         if (tv != null) tv.setText(text);
     }
 

@@ -6,12 +6,6 @@
     android:background="@color/bg_primary"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/bg_secondary"
-        app:titleTextColor="@color/text_primary"/>
 
     <ScrollView
         android:layout_width="match_parent"
