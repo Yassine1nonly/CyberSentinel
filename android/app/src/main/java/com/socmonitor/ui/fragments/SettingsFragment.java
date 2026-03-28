@@ -4,26 +4,25 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
-
-import com.socmonitor.databinding.FragmentSettingsBinding;
+import com.socmonitor.R;
 import com.socmonitor.utils.SessionManager;
 
 public class SettingsFragment extends Fragment {
-
-    private FragmentSettingsBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
     @Override
@@ -31,22 +30,25 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         SessionManager session = new SessionManager(requireContext());
-        binding.tvUserEmail.setText(session.getUserEmail());
-        binding.tvUserRole.setText(session.getUserRole());
 
-        binding.switchCriticalNotif.setChecked(true);
-        binding.switchHighNotif.setChecked(true);
-        binding.switchMediumNotif.setChecked(false);
+        TextView tvEmail = view.findViewById(R.id.tv_user_email);
+        TextView tvRole  = view.findViewById(R.id.tv_user_role);
+        if (tvEmail != null) tvEmail.setText(session.getEmail());
+        if (tvRole  != null) tvRole.setText(session.getRole());
 
-        binding.btnSaveSettings.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show());
+        SwitchCompat swCrit   = view.findViewById(R.id.switch_critical_notif);
+        SwitchCompat swHigh   = view.findViewById(R.id.switch_high_notif);
+        SwitchCompat swMedium = view.findViewById(R.id.switch_medium_notif);
+        if (swCrit   != null) swCrit.setChecked(true);
+        if (swHigh   != null) swHigh.setChecked(true);
+        if (swMedium != null) swMedium.setChecked(false);
 
-        binding.etBackendUrl.setText("http://your-siem-backend:5000/api");
-    }
+        EditText etUrl = view.findViewById(R.id.et_backend_url);
+        if (etUrl != null) etUrl.setText("http://your-siem-backend:5000/api");
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        Button btnSave = view.findViewById(R.id.btn_save_settings);
+        if (btnSave != null)
+            btnSave.setOnClickListener(v ->
+                    Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show());
     }
 }

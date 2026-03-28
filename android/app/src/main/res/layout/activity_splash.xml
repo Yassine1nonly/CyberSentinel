@@ -7,27 +7,27 @@
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:src="@drawable/ic_shield"
         android:tint="@color/accent_cyan" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="sans-serif-medium"
+        android:layout_marginTop="20dp"
         android:text="CyberSentinel"
         android:textColor="@color/text_primary"
-        android:textSize="32sp" />
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="SOC Alert &amp; Monitoring"
-        android:textColor="@color/text_secondary"
-        android:textSize="14sp" />
+        android:layout_marginTop="6dp"
+        android:text="SOC Alert Monitor"
+        android:textColor="@color/accent_cyan"
+        android:textSize="13sp" />
 
     <ProgressBar
         android:layout_width="wrap_content"

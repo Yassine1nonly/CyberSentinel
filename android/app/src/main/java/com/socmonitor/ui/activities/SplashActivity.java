@@ -3,31 +3,21 @@ package com.socmonitor.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
+import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.socmonitor.R;
 import com.socmonitor.utils.SessionManager;
 
 public class SplashActivity extends AppCompatActivity {
-
-    private static final int SPLASH_DELAY = 2000; // 2 seconds
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        new Handler().postDelayed(() -> {
-            SessionManager session = new SessionManager(this);
-            Intent intent;
-            if (session.isLoggedIn()) {
-                intent = new Intent(SplashActivity.this, MainActivity.class);
-            } else {
-                intent = new Intent(SplashActivity.this, LoginActivity.class);
-            }
-            startActivity(intent);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Class<?> dest = new SessionManager(this).isLoggedIn()
+                    ? MainActivity.class : LoginActivity.class;
+            startActivity(new Intent(this, dest));
             finish();
-        }, SPLASH_DELAY);
+        }, 1500);
     }
 }

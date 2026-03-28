@@ -1,30 +1,37 @@
 package com.socmonitor.utils;
 
-import android.content.Context;
-import androidx.core.content.ContextCompat;
-import com.socmonitor.R;
+import android.graphics.Color;
 
 public class SeverityUtils {
 
-    public static int getColor(Context ctx, String severity) {
-        if (severity == null) return ContextCompat.getColor(ctx, R.color.severity_info);
+    public static int getColor(String severity) {
+        if (severity == null) return Color.parseColor("#1565C0");
         switch (severity.toUpperCase()) {
-            case "CRITICAL": return ContextCompat.getColor(ctx, R.color.severity_critical);
-            case "HIGH":     return ContextCompat.getColor(ctx, R.color.severity_high);
-            case "MEDIUM":   return ContextCompat.getColor(ctx, R.color.severity_medium);
-            case "LOW":      return ContextCompat.getColor(ctx, R.color.severity_low);
-            default:         return ContextCompat.getColor(ctx, R.color.severity_info);
+            case "CRITICAL": return Color.parseColor("#B71C1C");
+            case "HIGH":     return Color.parseColor("#E65100");
+            case "MEDIUM":   return Color.parseColor("#F57F17");
+            case "LOW":      return Color.parseColor("#2E7D32");
+            default:         return Color.parseColor("#1565C0");
         }
     }
 
     public static String getEmoji(String severity) {
-        if (severity == null) return "ℹ️";
+        if (severity == null) return "[INFO]";
         switch (severity.toUpperCase()) {
-            case "CRITICAL": return "🔴";
-            case "HIGH":     return "🟠";
-            case "MEDIUM":   return "🟡";
-            case "LOW":      return "🟢";
-            default:         return "🔵";
+            case "CRITICAL": return "[CRIT]";
+            case "HIGH":     return "[HIGH]";
+            case "MEDIUM":   return "[MED]";
+            case "LOW":      return "[LOW]";
+            default:         return "[INFO]";
+        }
+    }
+
+    public static int getStatusColor(String status) {
+        if (status == null) return Color.parseColor("#EF5350");
+        switch (status.toUpperCase()) {
+            case "ACKNOWLEDGED": return Color.parseColor("#FFB300");
+            case "RESOLVED":     return Color.parseColor("#66BB6A");
+            default:             return Color.parseColor("#EF5350");
         }
     }
 }

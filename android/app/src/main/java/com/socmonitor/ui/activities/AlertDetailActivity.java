@@ -1,110 +1,98 @@
 package com.socmonitor.ui.activities;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import androidx.appcompat.widget.Toolbar;
 import com.socmonitor.R;
-import com.socmonitor.databinding.ActivityAlertDetailBinding;
 import com.socmonitor.model.Alert;
 import com.socmonitor.network.MockDataRepository;
 import com.socmonitor.utils.SeverityUtils;
 
 public class AlertDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ALERT_ID = "alert_id";
-    private ActivityAlertDetailBinding binding;
-    private Alert alert;
+    public static final String EXTRA_ID = "alert_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityAlertDetailBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_alert_detail);
 
-        setSupportActionBar(binding.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Alert Detail");
         }
 
-        String alertId = getIntent().getStringExtra(EXTRA_ALERT_ID);
-        alert = MockDataRepository.getInstance().getAlertById(alertId);
+        String id = getIntent().getStringExtra(EXTRA_ID);
+        Alert alert = MockDataRepository.getInstance().getById(id);
+        if (alert == null) { finish(); return; }
 
-        if (alert == null) {
-            finish();
-            return;
-        }
-
-        populateUI();
-        setupButtons();
+        bind(alert);
     }
 
-    private void populateUI() {
-        binding.tvAlertTitle.setText(alert.getTitle());
-        binding.tvDescription.setText(alert.getDescription());
-        binding.tvSeverity.setText(alert.getSeverity());
-        binding.tvStatus.setText(alert.getStatus());
-        binding.tvSrcIp.setText(alert.getSourceIp());
-        binding.tvDstIp.setText(alert.getDestinationIp());
-        binding.tvHost.setText(alert.getHost());
-        binding.tvCategory.setText(alert.getCategory());
-        binding.tvTimestamp.setText(alert.getTimestamp());
-        binding.tvRuleName.setText(alert.getRuleName());
-        binding.tvMitre.setText(alert.getMitreTechnique());
-        binding.tvAlertId.setText("ID: " + alert.getId());
+    private void bind(Alert a) {
+        setText(R.id.tv_alert_id,    "ID: " + a.getId());
+        setText(R.id.tv_alert_title, a.getTitle());
+        setText(R.id.tv_description, a.getDescription());
+        setText(R.id.tv_timestamp,   a.getTimestamp());
+        setText(R.id.tv_src_ip,      a.getSourceIp());
+        setText(R.id.tv_dst_ip,      a.getDestinationIp());
+        setText(R.id.tv_host,        a.getHost());
+        setText(R.id.tv_category,    a.getCategory());
+        setText(R.id.tv_rule_name,   a.getRuleName());
+        setText(R.id.tv_mitre,       a.getMitreTechnique());
 
-        // Severity chip color
-        binding.tvSeverity.setBackgroundColor(SeverityUtils.getColor(this, alert.getSeverity()));
+        TextView tvSev    = findViewById(R.id.tv_severity);
+        TextView tvStatus = findViewById(R.id.tv_status);
+        tvSev.setText(a.getSeverity());
+        tvSev.setBackgroundColor(SeverityUtils.getColor(a.getSeverity()));
+        tvStatus.setText(a.getStatus());
+        tvStatus.setTextColor(SeverityUtils.getStatusColor(a.getStatus()));
 
-        // Evidence list
-        if (alert.getEvidence() != null && !alert.getEvidence().isEmpty()) {
+        // Evidence
+        if (a.getEvidence() != null) {
             StringBuilder sb = new StringBuilder();
-            for (String e : alert.getEvidence()) sb.append("• ").append(e).append("\n");
-            binding.tvEvidence.setText(sb.toString().trim());
-        } else {
-            binding.tvEvidence.setText("No evidence attached.");
+            for (String e : a.getEvidence()) sb.append("• ").append(e).append("\n");
+            setText(R.id.tv_evidence, sb.toString().trim());
         }
 
-        updateButtonState();
-    }
+        Button btnAck     = findViewById(R.id.btn_acknowledge);
+        Button btnResolve = findViewById(R.id.btn_resolve);
+        updateButtons(a, btnAck, btnResolve, tvStatus);
 
-    private void setupButtons() {
-        binding.btnAcknowledge.setOnClickListener(v -> {
-            MockDataRepository.getInstance().acknowledgeAlert(alert.getId());
-            alert.setStatus("ACKNOWLEDGED");
-            updateButtonState();
+        btnAck.setOnClickListener(v -> {
+            MockDataRepository.getInstance().acknowledge(a.getId());
+            a.setStatus("ACKNOWLEDGED");
+            updateButtons(a, btnAck, btnResolve, tvStatus);
             Toast.makeText(this, "Alert acknowledged", Toast.LENGTH_SHORT).show();
         });
 
-        binding.btnResolve.setOnClickListener(v -> {
-            MockDataRepository.getInstance().resolveAlert(alert.getId());
-            alert.setStatus("RESOLVED");
-            updateButtonState();
-            Toast.makeText(this, "Alert resolved ✓", Toast.LENGTH_SHORT).show();
+        btnResolve.setOnClickListener(v -> {
+            MockDataRepository.getInstance().resolve(a.getId());
+            a.setStatus("RESOLVED");
+            updateButtons(a, btnAck, btnResolve, tvStatus);
+            Toast.makeText(this, "Alert resolved \u2713", Toast.LENGTH_SHORT).show();
         });
     }
 
-    private void updateButtonState() {
-        String status = alert.getStatus();
-        binding.tvStatus.setText(status);
+    private void updateButtons(Alert a, Button ack, Button resolve, TextView tvStatus) {
+        tvStatus.setText(a.getStatus());
+        tvStatus.setTextColor(SeverityUtils.getStatusColor(a.getStatus()));
+        boolean isAck      = "ACKNOWLEDGED".equals(a.getStatus());
+        boolean isResolved = "RESOLVED".equals(a.getStatus());
+        ack.setEnabled(!isAck && !isResolved);
+        ack.setAlpha((!isAck && !isResolved) ? 1f : 0.4f);
+        resolve.setEnabled(!isResolved);
+        resolve.setAlpha(!isResolved ? 1f : 0.4f);
+    }
 
-        switch (status.toUpperCase()) {
-            case "ACKNOWLEDGED":
-                binding.btnAcknowledge.setEnabled(false);
-                binding.btnAcknowledge.setAlpha(0.5f);
-                break;
-            case "RESOLVED":
-                binding.btnAcknowledge.setEnabled(false);
-                binding.btnAcknowledge.setAlpha(0.5f);
-                binding.btnResolve.setEnabled(false);
-                binding.btnResolve.setAlpha(0.5f);
-                break;
-        }
+    private void setText(int viewId, String text) {
+        TextView tv = findViewById(viewId);
+        if (tv != null) tv.setText(text);
     }
 
     @Override

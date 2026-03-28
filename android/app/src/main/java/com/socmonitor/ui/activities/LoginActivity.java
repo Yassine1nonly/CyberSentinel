@@ -4,66 +4,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.socmonitor.databinding.ActivityLoginBinding;
+import com.socmonitor.R;
 import com.socmonitor.utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private ActivityLoginBinding binding;
-    private SessionManager session;
-
-    // Demo credentials (replace with real API auth)
-    private static final String DEMO_EMAIL    = "analyst@soc.local";
-    private static final String DEMO_PASSWORD = "soc@2024";
+    private static final String DEMO_EMAIL = "analyst@soc.local";
+    private static final String DEMO_PASS  = "soc@2024";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_login);
 
-        session = new SessionManager(this);
+        EditText etEmail    = findViewById(R.id.et_email);
+        EditText etPassword = findViewById(R.id.et_password);
+        Button   btnLogin   = findViewById(R.id.btn_login);
+        ProgressBar pb      = findViewById(R.id.progress_bar);
 
-        binding.btnLogin.setOnClickListener(v -> attemptLogin());
+        btnLogin.setOnClickListener(v -> {
+            String email = etEmail.getText().toString().trim();
+            String pass  = etPassword.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) { etEmail.setError("Required"); return; }
+            if (TextUtils.isEmpty(pass))  { etPassword.setError("Required"); return; }
 
-        // Pre-fill demo credentials hint
-        binding.etEmail.setHint("analyst@soc.local");
-        binding.etPassword.setHint("soc@2024");
-    }
+            pb.setVisibility(View.VISIBLE);
+            btnLogin.setEnabled(false);
 
-    private void attemptLogin() {
-        String email = binding.etEmail.getText().toString().trim();
-        String pass  = binding.etPassword.getText().toString().trim();
-
-        if (TextUtils.isEmpty(email)) {
-            binding.etEmail.setError("Email required");
-            return;
-        }
-        if (TextUtils.isEmpty(pass)) {
-            binding.etPassword.setError("Password required");
-            return;
-        }
-
-        binding.progressBar.setVisibility(View.VISIBLE);
-        binding.btnLogin.setEnabled(false);
-
-        // Simulate network delay
-        binding.getRoot().postDelayed(() -> {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.btnLogin.setEnabled(true);
-
-            if (email.equals(DEMO_EMAIL) && pass.equals(DEMO_PASSWORD)) {
-                session.createLoginSession(email, "SOC Analyst");
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-            } else {
-                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-                binding.etPassword.setText("");
-            }
-        }, 1200);
+            btnLogin.postDelayed(() -> {
+                pb.setVisibility(View.GONE);
+                btnLogin.setEnabled(true);
+                if (email.equals(DEMO_EMAIL) && pass.equals(DEMO_PASS)) {
+                    new SessionManager(this).login(email, "SOC Analyst");
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                    etPassword.setText("");
+                }
+            }, 1000);
+        });
     }
 }

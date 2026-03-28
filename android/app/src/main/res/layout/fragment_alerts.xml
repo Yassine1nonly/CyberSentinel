@@ -6,26 +6,36 @@
     android:background="@color/bg_primary"
     android:orientation="vertical">
 
-    <!-- Filter chips -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
         android:background="@color/bg_secondary"
         android:paddingVertical="8dp"
-        android:paddingHorizontal="12dp">
-
+        android:paddingHorizontal="10dp">
         <com.google.android.material.chip.ChipGroup
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.chip.Chip android:id="@+id/chip_all" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="All" style="@style/Widget.MaterialComponents.Chip.Choice" android:textColor="@color/text_primary" app:chipBackgroundColor="@color/accent_blue"/>
-            <com.google.android.material.chip.Chip android:id="@+id/chip_critical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Critical" style="@style/Widget.MaterialComponents.Chip.Choice" android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_critical"/>
-            <com.google.android.material.chip.Chip android:id="@+id/chip_high" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="High" style="@style/Widget.MaterialComponents.Chip.Choice" android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_high"/>
-            <com.google.android.material.chip.Chip android:id="@+id/chip_medium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Medium" style="@style/Widget.MaterialComponents.Chip.Choice" android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_medium"/>
-            <com.google.android.material.chip.Chip android:id="@+id/chip_low" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Low" style="@style/Widget.MaterialComponents.Chip.Choice" android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_low"/>
-
+            android:layout_height="wrap_content">
+            <com.google.android.material.chip.Chip android:id="@+id/chip_all"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="All" style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/text_primary" app:chipBackgroundColor="@color/accent_blue"/>
+            <com.google.android.material.chip.Chip android:id="@+id/chip_critical"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Critical" style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_critical"/>
+            <com.google.android.material.chip.Chip android:id="@+id/chip_high"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="High" style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_high"/>
+            <com.google.android.material.chip.Chip android:id="@+id/chip_medium"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Medium" style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_medium"/>
+            <com.google.android.material.chip.Chip android:id="@+id/chip_low"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Low" style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textColor="@color/text_primary" app:chipBackgroundColor="@color/severity_low"/>
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
@@ -36,23 +46,21 @@
         android:text="0 alerts"
         android:textColor="@color/text_secondary"
         android:textSize="12sp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"/>
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="6dp"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_alerts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="12dp"
-            android:paddingBottom="12dp"
-            android:clipToPadding="false" />
-
+            android:paddingHorizontal="10dp"
+            android:paddingBottom="10dp"
+            android:clipToPadding="false"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

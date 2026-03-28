@@ -1,108 +1,136 @@
 package com.socmonitor.ui.fragments;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.socmonitor.databinding.FragmentDashboardBinding;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.socmonitor.R;
 import com.socmonitor.model.DashboardStats;
 import com.socmonitor.network.MockDataRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DashboardFragment extends Fragment {
-
-    private FragmentDashboardBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadDashboard();
-        binding.swipeRefresh.setOnRefreshListener(() -> {
-            loadDashboard();
-            binding.swipeRefresh.setRefreshing(false);
-        });
+        load(view);
+        SwipeRefreshLayout srl = view.findViewById(R.id.swipe_refresh);
+        srl.setOnRefreshListener(() -> { load(view); srl.setRefreshing(false); });
     }
 
-    private void loadDashboard() {
-        DashboardStats stats = MockDataRepository.getInstance().getDashboardStats();
+    private void load(View v) {
+        DashboardStats s = MockDataRepository.getInstance().getStats();
 
-        binding.tvTotalAlerts.setText(String.valueOf(stats.getTotalAlerts()));
-        binding.tvCritical.setText(String.valueOf(stats.getCriticalCount()));
-        binding.tvHigh.setText(String.valueOf(stats.getHighCount()));
-        binding.tvMedium.setText(String.valueOf(stats.getMediumCount()));
-        binding.tvLow.setText(String.valueOf(stats.getLowCount()));
-        binding.tvFailedLogins.setText(String.valueOf(stats.getFailedLogins24h()));
-        binding.tvMalwareDetections.setText(String.valueOf(stats.getMalwareDetections24h()));
-        binding.tvSuspiciousIps.setText(String.valueOf(stats.getSuspiciousIpsCount()));
-        binding.tvLastUpdated.setText("Last updated: " + stats.getLastUpdated());
+        set(v, R.id.tv_total_alerts,        String.valueOf(s.totalAlerts));
+        set(v, R.id.tv_critical,            String.valueOf(s.criticalCount));
+        set(v, R.id.tv_high,                String.valueOf(s.highCount));
+        set(v, R.id.tv_medium,              String.valueOf(s.mediumCount));
+        set(v, R.id.tv_low,                 String.valueOf(s.lowCount));
+        set(v, R.id.tv_failed_logins,       String.valueOf(s.failedLogins24h));
+        set(v, R.id.tv_malware_detections,  String.valueOf(s.malwareDetections24h));
+        set(v, R.id.tv_suspicious_ips,      String.valueOf(s.suspiciousIpsCount));
+        set(v, R.id.tv_last_updated,        "Updated: " + s.lastUpdated);
 
-        // Threat level indicator
-        String level = stats.getThreatLevel();
-        binding.tvThreatLevel.setText("Threat Level: " + level);
-        switch (level) {
-            case "CRITICAL": binding.tvThreatLevel.setBackgroundColor(0xFFB71C1C); break;
-            case "HIGH":     binding.tvThreatLevel.setBackgroundColor(0xFFE65100); break;
-            case "MEDIUM":   binding.tvThreatLevel.setBackgroundColor(0xFFF57F17); break;
-            default:         binding.tvThreatLevel.setBackgroundColor(0xFF1B5E20); break;
+        TextView tvThreat = v.findViewById(R.id.tv_threat_level);
+        tvThreat.setText("Threat Level: " + s.threatLevel);
+        switch (s.threatLevel) {
+            case "CRITICAL": tvThreat.setBackgroundColor(Color.parseColor("#B71C1C")); break;
+            case "HIGH":     tvThreat.setBackgroundColor(Color.parseColor("#E65100")); break;
+            default:         tvThreat.setBackgroundColor(Color.parseColor("#1565C0")); break;
         }
 
-        setupPieChart(stats);
+        // Update the custom bar chart
+        BarChartView chart = v.findViewById(R.id.bar_chart);
+        if (chart != null) {
+            chart.setData(
+                new int[]{s.criticalCount, s.highCount, s.mediumCount, s.lowCount},
+                new String[]{"Critical", "High", "Medium", "Low"},
+                new int[]{Color.parseColor("#B71C1C"), Color.parseColor("#E65100"),
+                          Color.parseColor("#F57F17"), Color.parseColor("#2E7D32")}
+            );
+        }
     }
 
-    private void setupPieChart(DashboardStats stats) {
-        List<PieEntry> entries = new ArrayList<>();
-        if (stats.getCriticalCount() > 0) entries.add(new PieEntry(stats.getCriticalCount(), "Critical"));
-        if (stats.getHighCount() > 0)     entries.add(new PieEntry(stats.getHighCount(),     "High"));
-        if (stats.getMediumCount() > 0)   entries.add(new PieEntry(stats.getMediumCount(),   "Medium"));
-        if (stats.getLowCount() > 0)      entries.add(new PieEntry(stats.getLowCount(),      "Low"));
-
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setColors(
-                Color.parseColor("#B71C1C"),
-                Color.parseColor("#E65100"),
-                Color.parseColor("#F57F17"),
-                Color.parseColor("#1B5E20")
-        );
-        dataSet.setValueTextColor(Color.WHITE);
-        dataSet.setValueTextSize(11f);
-
-        PieData data = new PieData(dataSet);
-        binding.pieChart.setData(data);
-        binding.pieChart.setHoleColor(Color.parseColor("#1A1A2E"));
-        binding.pieChart.setHoleRadius(55f);
-        binding.pieChart.setCenterText("Alerts\nby Severity");
-        binding.pieChart.setCenterTextColor(Color.WHITE);
-        binding.pieChart.setCenterTextSize(12f);
-        binding.pieChart.getDescription().setEnabled(false);
-        binding.pieChart.getLegend().setTextColor(Color.WHITE);
-        binding.pieChart.animateY(800);
-        binding.pieChart.invalidate();
+    private void set(View v, int id, String text) {
+        TextView tv = v.findViewById(id);
+        if (tv != null) tv.setText(text);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    // ── Inline custom Canvas bar chart (zero dependencies) ──────────────────
+    public static class BarChartView extends View {
+        private int[] values;
+        private String[] labels;
+        private int[] colors;
+        private final Paint barPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint valPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        public BarChartView(Context ctx) { super(ctx); init(); }
+        public BarChartView(Context ctx, AttributeSet a) { super(ctx, a); init(); }
+        public BarChartView(Context ctx, AttributeSet a, int d) { super(ctx, a, d); init(); }
+
+        private void init() {
+            textPaint.setColor(Color.parseColor("#B0BEC5"));
+            textPaint.setTextSize(28f);
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            valPaint.setColor(Color.WHITE);
+            valPaint.setTextSize(32f);
+            valPaint.setTextAlign(Paint.Align.CENTER);
+            valPaint.setFakeBoldText(true);
+        }
+
+        public void setData(int[] values, String[] labels, int[] colors) {
+            this.values = values; this.labels = labels; this.colors = colors;
+            invalidate();
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            if (values == null || values.length == 0) return;
+            int w = getWidth(), h = getHeight();
+            int n = values.length;
+            int max = 1;
+            for (int v : values) if (v > max) max = v;
+
+            float barW   = (w - 60f) / n - 20f;
+            float maxH   = h - 80f;
+            float startX = 30f;
+
+            for (int i = 0; i < n; i++) {
+                float barH  = maxH * values[i] / max;
+                float left  = startX + i * (barW + 20f);
+                float top   = h - 60f - barH;
+                float right = left + barW;
+
+                barPaint.setColor(colors[i]);
+                canvas.drawRoundRect(new RectF(left, top, right, h - 60f), 8, 8, barPaint);
+
+                // Value above bar
+                valPaint.setColor(colors[i]);
+                canvas.drawText(String.valueOf(values[i]), left + barW / 2, top - 8, valPaint);
+
+                // Label below bar
+                canvas.drawText(labels[i], left + barW / 2, h - 20f, textPaint);
+            }
+        }
     }
 }

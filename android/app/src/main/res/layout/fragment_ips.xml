@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary"
     android:orientation="vertical">
-
     <TextView
         android:id="@+id/tv_ip_count"
         android:layout_width="match_parent"
@@ -12,17 +11,15 @@
         android:text="0 suspicious IPs"
         android:textColor="@color/accent_cyan"
         android:textSize="13sp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:fontFamily="sans-serif-medium"/>
-
+        android:textStyle="bold"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_ips"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingHorizontal="12dp"
-        android:paddingBottom="12dp"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="10dp"
         android:clipToPadding="false"/>
-
 </LinearLayout>
